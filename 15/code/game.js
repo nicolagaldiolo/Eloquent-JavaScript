@@ -16,8 +16,8 @@ var simpleLevelPlan = [
 function Level(plan) {
   this.width = plan[0].length; // lunghezza del piano (conto quanto è lungo il primo elemento dell'array)
   this.height = plan.length; // altezza del piano (conto di quanto elementi è composto l'array)
-  this.grid = []; // array di array che definisce ogni singolo elemento della griglia
-  this.actors = []; // definisco l'array vuoto degli attori
+  this.grid = []; // array di array che contiene ogni singolo elemento (statico) della griglia
+  this.actors = []; // array che contiene gli attori (elementi dinamici)
 
   for (var y = 0; y < this.height; y++) { // mi giro tutti gli elementi dell'array
     var line = plan[y] // mi definisco una variabile che identifica ogni linea
@@ -58,7 +58,8 @@ Level.prototype.isFinished = function() {
 
 // Oggetto per calcolare le posizioni
 function Vector(x, y) {
-  this.x = x; this.y = y;
+  this.x = x; 
+  this.y = y;
 }
 Vector.prototype.plus = function(other) {
   return new Vector(this.x + other.x, this.y + other.y);
@@ -89,7 +90,8 @@ Player.prototype.type = "player";
 function Coin(pos) {
   this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1));
   this.size = new Vector(0.6, 0.6);
-  this.wobble = Math.random() * Math.PI * 2; // ????????????????????????????????
+  this.wobble = Math.random() * Math.PI * 2; // ????????? // Per movimentare un po il gioco diamo un effetto di ondulamento con piccoli movimento su e giù
+  console.log(this.wobble);
 }
 Coin.prototype.type = "coin";
 
@@ -108,6 +110,8 @@ function Lava(pos, ch) {
 }
 Lava.prototype.type = "lava";
 
+
+
 // funzione ausiliaria che dato un parmetro name e una classe crea un oggetto del dom e gli assegna la classe (se passata).
 function elt(name, className) {
   var elt = document.createElement(name);
@@ -115,14 +119,8 @@ function elt(name, className) {
   return elt;
 }
 
-
-
-
-
-
-
-
 function DOMDisplay(parent, level) {
+  console.log(level);
   this.wrap = parent.appendChild(elt("div", "game"));
   this.level = level;
 
@@ -131,6 +129,9 @@ function DOMDisplay(parent, level) {
   this.drawFrame();
 }
 
+// Funzione che crea la tabella basandosi sulle dimensioni del livello.
+// fa un doppio foreach girandosi layer creando tr e td.
+// per ogni td semplicemente assegna una classe con il nome dell'oggetto corrispettivo (wall, )
 DOMDisplay.prototype.drawBackground = function() {
   var table = elt("table", "background");
   table.style.width = this.level.width * scale + "px";
@@ -138,6 +139,7 @@ DOMDisplay.prototype.drawBackground = function() {
     var rowElt = table.appendChild(elt("tr"));
     rowElt.style.height = scale + "px";
     row.forEach(function(type) {
+      console.log(type);
       rowElt.appendChild(elt("td", type));
     });
   });
