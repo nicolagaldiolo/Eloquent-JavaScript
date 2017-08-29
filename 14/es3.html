@@ -1,0 +1,78 @@
+<html>
+  <head>
+
+    <style>
+      .trail { /* className for the trail elements */
+        position: absolute;
+        height: 6px; width: 6px;
+        border-radius: 3px;
+        background: teal;
+      }
+      button{
+        background: #f5f5f5;
+        border:0;
+        padding:10px;
+        margin:0;
+      }
+      body {
+        height: 300px;
+      }
+    </style>
+
+  </head>
+  <body>
+    
+    <div id="wrapper">
+      <div data-tabname="one">Tab one</div>
+      <div data-tabname="two">Tab two</div>
+      <div data-tabname="three">Tab three</div>
+    </div>
+    <script>
+      function asTabs(node) {
+        var tabs = [];
+        for( var i=0; i<node.childNodes.length; i++){
+          var child = node.childNodes[i];
+          if(child.nodeType === 1)
+            tabs.push(child);
+        }
+        
+        var tabsList = document.createElement("div");
+        tabs.forEach(function(tab, i){
+          var button = document.createElement("button");
+          button.textContent = tab.getAttribute("data-tabname");
+          button.addEventListener("click", function(){ 
+            selectTab(i);
+          });
+          tabsList.appendChild(button);
+        });
+
+        node.insertBefore(tabsList, node.firstChild);
+
+        function selectTab(n){
+          tabs.forEach(function(tab, i){
+            if(n === i){
+              tab.style.display = "";
+            }else{
+              tab.style.display = "none";
+            }
+          });
+
+          tabsList.childNodes.forEach(function(tab, i){
+            if(n === i){
+              tab.style.background = "violet";
+            }else{
+              tab.style.background = "";
+            }
+          });
+
+        }
+
+        selectTab(0);
+
+      }
+
+      asTabs(document.querySelector("#wrapper"));
+    </script>
+
+  </body>
+</html>

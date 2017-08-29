@@ -1,0 +1,40 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <h3>Eventi per i tasti</h3>
+    <p>Alla pressione del tasto "v" lo sfondo si colora di viole, al rilascio torna bianco.</p>
+    
+    <script>
+      console.log("---EVENTI PER I TASTI ------------------------------------");
+      addEventListener("keydown", function(e){
+        if(e.keyCode === 86)
+          document.body.style.background = "violet";
+        if(e.keyCode === 89)
+          document.body.style.background = "yellow";
+        console.log(e);
+      })
+
+      addEventListener("keyup", function(e){
+        if(e.keyCode === 86 || e.keyCode === 89)
+          document.body.style.background = "";
+        console.log(e);
+      })
+
+      console.log("Violet".charCodeAt(0));
+      console.log("1".charCodeAt(0));
+
+      addEventListener("keydown", function(event){
+        if(event.keyCode == 32 && event.ctrlKey){
+          console.log("Continuing");
+        }
+      })
+
+      addEventListener("keypress", function(e){
+        console.log(e.charCode);
+        console.log(String.fromCharCode(e.charCode));
+      })
+
+    </script>
+  </body>
+</html>

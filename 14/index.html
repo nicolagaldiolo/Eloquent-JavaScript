@@ -1,0 +1,104 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <p>Click this document to activate the handler.</p>
+    <hr>
+    <button class="button">Click me</button>
+    <hr>
+    <button class="button2">Remove Action</button>
+    <hr>
+    <button class="button3">Oggetto evento</button>
+    <hr>
+    <p class="element">
+      Paragrafo di testo<br>
+      <button class="button4">Oggetto evento</button>
+    </p>
+    <hr>
+    <h3>Proprietà target</h3>
+    <div class="button-content">
+      <button>Bottone 1</button>
+      <button>Bottone 2</button>
+      <button>Bottone 3</button>
+      <a href="#">Link</a>
+    </p>
+
+    <hr>
+    <h3>Azioni predefinite</h3>
+    <a class="myLink" href="https://developer.mozilla.org/" target="_blank">Link test</a>
+    
+
+    <script>
+      addEventListener("click", function(){
+        console.log("You clicked global window!");
+      });
+
+      console.log("---------------------------------------");
+      
+      var button = document.querySelector(".button");
+      button.addEventListener("click", function(){
+        console.log("Stavolta ho cliccato il bottone!");
+      });
+
+      console.log("---------------------------------------");
+
+      var button2 = document.querySelector(".button2");
+      function removeAction(){
+        console.log("Azione rimossa");
+        button2.removeEventListener("click", removeAction);
+      }
+      button2.addEventListener("click", removeAction);
+
+      console.log("---OGGETTI EVENTO------------------------------------");
+
+      var button3 = document.querySelector(".button3");
+      button3.addEventListener("mousedown", function(e){
+        switch(e.which){
+          case 1:
+            console.log("Left button");
+            break;
+          case 2:
+            console.log("Middle button");
+            break;
+          case 3:
+         default:
+            console.log("Right button");
+            break;
+        }
+        console.log(e);
+        console.log(e.type); // nella proprietà type viene salvato il tipo di evento scatenato.
+      });
+
+      console.log("---PROPAGAZIONE------------------------------------");
+
+      var myparag = document.querySelector(".element");
+      var mybutton = document.querySelector(".button4");
+
+      myparag.addEventListener("mousedown", function(){
+        console.log("Cliccato sul paragrafo");
+      });
+
+      mybutton.addEventListener("mousedown", function(e){
+        console.log("Clicccato il bottone");
+        if(e.which === 3){
+          e.stopPropagation(); // evita la propagazione dell'evento
+        }
+      });
+
+      console.log("---PROPAGAZIONE (target)------------------------------------");
+      var mycontent = document.querySelector(".button-content");
+      mycontent.addEventListener("click", function(e){
+        if(e.target.nodeName === 'BUTTON')
+          console.log(e.target.textContent);
+      });
+
+      console.log("---AZIONI PREDEFINITE ------------------------------------");
+      var mylink = document.querySelector(".myLink");
+      mylink.addEventListener("click", function(e){
+        console.log("Nope");
+        e.preventDefault(); // evita il comportamento di default
+      })
+
+    </script>
+  </body>
+</html>

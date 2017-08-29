@@ -1,0 +1,46 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <h1>Debouncing</h1>
+    <textarea style="width:500px; height:300px;">Type something here...</textarea>
+    <div class="mouseInfo"></div>
+    <script>
+      
+      console.log("---keydown----------------------");
+
+      var textarea = document.body.querySelector("textarea");
+      var timeout;
+      textarea.addEventListener("keydown", function(){
+        clearTimeout(timeout); //elimino eventuali timeout rimasti appesi in quanto voglio chiamare il timeout solo quando effettivamente mi fermo non ad ogni pressione di un tasto.
+        timeout = setTimeout(function(){
+          console.log("You stopped typing.");
+        }, 2000);
+      });
+
+      console.log("---mousemove----------------------");
+      
+      function displayCoords(event){
+        var mouseInfo = document.querySelector(".mouseInfo");
+        mouseInfo.textContent = "Mouse at " + event.pageX + ", " + event.pageY;
+      }
+
+      var skeduled = false, lastEventRegistry;
+      
+      addEventListener("mousemove", function(event){
+        lastEventRegistry = event; 
+        // assegno l'evento alla variabile lastEventRegistry in quanto event nasce e muore all'interno dell'event listener ed a setTimeout viene passato il primo
+        // evento registrato, mentre la variabile lastEventRegistry creata fuori dal listener viene continuamente aggiornata.
+        if(!skeduled){
+          skeduled = true;
+          setTimeout( function(){
+
+            skeduled = false;
+            displayCoords(lastEventRegistry);        
+          }, 4000);
+        }
+      });
+
+    </script>
+  </body>
+</html>

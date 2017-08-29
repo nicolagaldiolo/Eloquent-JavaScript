@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <style>
+      body{
+        background: beige;
+        height: 8000px
+      }
+      .info{
+        position: fixed;
+        top:0;
+        left:0;
+        background: #000;
+        color:#fff;
+        padding: 20px;
+      }
+      .dot{
+        height: 8px;
+        width:8px;
+        background: blue;
+        position: absolute;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="info">
+      <h3>Eventi del mouse (Click)</h3>
+      <h4>Posizione assoluta (<span class="pagex"></span> <span class="pagey"></span>)</h4>
+      <h4>Posizione relativa (<span class="pagexr"></span> <span class="pageYr"></span>)</h4>
+    </div>
+    
+    <script>
+      addEventListener("click", function(e){
+        var dot = document.createElement("div");
+        dot.className = "dot";
+        dot.style.left = e.pageX + "px";
+        dot.style.top = e.pageY + "px";
+        document.body.appendChild(dot);
+        
+        // posizioni assolute all'intero documento (pageX - pageY)
+        var textX = document.querySelector(".pagex");
+        textX.textContent = "PageX = " + e.pageX + "px";
+        var textY = document.querySelector(".pagey");
+        textY.textContent = "PageY = " + e.pageY + "px";
+        
+        // posizioni relative alla posizione del documento sullo schermo (clientX - clientY)
+        var textXr = document.querySelector(".pagexr");
+        textXr.textContent = "PageX = " + e.clientX + "px";
+        var textYr = document.querySelector(".pageyr");
+        textYr.textContent = "PageY = " + e.clientY + "px";
+      });
+      
+
+    </script>
+  </body>
+</html>

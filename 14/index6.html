@@ -1,0 +1,29 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <h1>Eventi FOCUS | BLUR</h1>
+    
+    <p>Name <input type="text" data-help="Insert your name"></p>
+    <p>Age <input type="text" data-help="Insert your age"></p>
+    <p id="help"></p>
+
+    <script>
+      
+      console.log(document.childNodes);
+      
+      var help = document.querySelector("#help");
+      var input = document.querySelectorAll("input");
+
+      for(var i = 0; i<input.length; i++){
+        input[i].addEventListener("focus", function(e){
+          help.textContent = e.target.getAttribute("data-help");
+        });
+        input[i].addEventListener("blur", function(e){
+          help.textContent = "";
+        })
+      }
+      
+    </script>
+  </body>
+</html>

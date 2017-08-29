@@ -1,0 +1,36 @@
+<html>
+  <head>
+
+  </head>
+  <body>
+    <div style="position:relative; width:800px; height:600px; background:red; margin:100px auto;">
+      <img class="cat" src="cat2.jpg" style="position:absolute;">
+      <img class="hat" src="hat.jpg" style="position:absolute;">
+    </div>
+
+    <script>
+      
+      var element = document.querySelectorAll("img");
+      element.forEach(function(i) {
+        // angle è il contatore dell'animazione per l'angolo corrente che viene incrementato in proporzione al tempo trascorso ogni volta che viene chiamata la funzione animate.
+        var angle = 0, lastTime = null;
+        function animate(time) {
+          if(lastTime != null)
+            angle += (time - lastTime) * 0.001;
+          lastTime = time;
+          i.style.top = (Math.sin(angle) * 200) + "px";
+          if(i.className == "cat"){
+            i.style.left = (Math.cos(angle) * 200) + "px";
+          }else{
+            i.style.right = (Math.cos(angle) * 200) + "px";
+          }
+          requestAnimationFrame(animate);
+        }
+        requestAnimationFrame(animate); // funzione che viene eseguita appena il browser è pronto a rintracciare lo schermo
+      }, this);
+
+
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,78 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <h1>Movimenti del mouse (drag)</h1>
+    <p>Drag the bar to change its width:</p>
+    <div style="background:#f5f5f5; overflow:hidden;">
+      <div class="dragbar" style="background:orange; width:60px; height:40px;"></div>
+    </div>
+
+    <hr>
+
+    <p class="mypar">Hover over this <strong>paragraph</strong>.</p>
+
+    <script>
+      var lastX; //Registra l'ultima posizione del mouse osservata sull'asse x
+      var rect = document.querySelector(".dragbar");
+      rect.addEventListener("mousedown", function(event){
+        if(event.which === 1){
+          lastX = event.pageX;
+          addEventListener("mousemove", moved);
+          event.preventDefault();
+        }
+      });
+
+      // Chiamo questa funzione per capire se ho rilasciato il bottone del mouse oppure no.
+      // devo fare questi controlli perchè alcuni browser interpretano mano il event.which quando sono dentro
+      // l'evento mousemove, es firefox ha un bug : "On mousemove events, the which property is incorrectly always set to 1"
+      function buttonPressed(event){
+        if(event.buttons == null)
+          return event.which != 0;
+        else
+          return event.buttons != 0;
+      }
+
+      function moved(event){
+        //console.log(event); //registro ogni singolo spostamento
+        if(!buttonPressed(event)){
+          removeEventListener("mousemove", moved);
+          //console.log("ho rimosso il listener mousemove");
+        }else{
+          // ad ogni spostamento del mouse event.pageX varrà +tot o -tot in quanto la posizione viene rilevata ad 
+          // ogni spostamento e solitamente sarà +1 o -1 rispetto alla precedente posizione (lastX)
+          var dist = event.pageX - lastX;
+          //console.log("event.pageX: ", event.pageX, " lastX: ", lastX);
+          
+          // Math.max mi torna il maggiore tra i due parametri,
+          // imposto un minimo di 10 in modo che la barra non possa mai essere minore di 10
+          var newWitch = Math.max(10, rect.offsetWidth + dist);
+          rect.style.width = newWitch + "px";
+          lastX = event.pageX; // aggiorno alla fine l'ultima posizione rilevata.
+        }
+      }
+
+
+      // MOUSEOVER - MOUSEOUT
+      
+      var para = document.querySelector(".mypar");
+
+      function isInside(node, target){
+        //You can omit statement 1 (like when your values are set before the loop starts): 
+        for(; node != null; node = node.parentNode){
+          if(node == target) return true;
+        }
+      }
+      
+      para.addEventListener("mouseover", function(event){
+        if(!isInside(event.relatedTarget, para))
+          para.style.color = "red";
+      });
+
+      para.addEventListener("mouseout", function(event){
+        if(!isInside(event.relatedTarget, para))
+          para.style.color = "";
+      });
+    </script>
+  </body>
+</html>

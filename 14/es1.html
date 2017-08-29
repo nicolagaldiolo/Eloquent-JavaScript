@@ -1,0 +1,22 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <input type="text">
+    <script>
+      
+      console.log("---keydown----------------------");
+
+      var field = document.body.querySelector("input");
+      field.addEventListener("keypress", function(event){
+        console.log(event);
+        var digit = String.fromCharCode(event.keyCode);
+        if(/[qwx]/i.test(digit)){
+          alert("\"" + digit + "\" è un carattere vietato!");
+          event.preventDefault();
+        }
+      });
+
+    </script>
+  </body>
+</html>

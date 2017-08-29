@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <style>
+      .progress{
+        position: fixed;
+        top:0;
+        left:0;
+        right: 0;
+      }
+      .progress > div{
+        height: 12px;
+        background: blue;
+        width: 0%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Eventi Scroll</h1>
+    <div class="progress"><div></div></div>
+    <p class="para"></p>
+
+    <script>
+      var bar = document.querySelector(".progress div");
+      var para = document.querySelector(".para");
+
+      addEventListener("scroll", function(){
+        
+        console.log("TOT: ", document.body.scrollHeight, " SCROLLATI: ", pageYOffset, " ALTEZZA FINESTRA: ", innerHeight);
+        
+        // pageYOffset  = pixel già scorsi dall'inizio del documento.
+        // scrollHeight = altezza intero documento
+        // innerHeight  = altezza della finestra
+
+        var max = document.body.scrollHeight - innerHeight; // quando mi resta da scrollare
+        var percent = (pageYOffset / max) * 100; 
+        bar.style.width = percent + "%";
+      });
+      var mytext = "";
+      for(var i=0; i<=300; i++){
+        mytext += "Scroll me...<br/>";
+      }
+      para.innerHTML = mytext;
+    </script>
+  </body>
+</html>
