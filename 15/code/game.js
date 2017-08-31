@@ -1,17 +1,3 @@
-// array di stringhe che rappresenta la griglia di un livello
-var simpleLevelPlan = [
-  "                      ",
-  "                      ",
-  "  x              = x  ",
-  "  x         o o    x  ",
-  "  x @      xxxxx   x  ",
-  "  xxxxx            x  ",
-  "      x!!!!!!!!!!!!x  ",
-  "      xxxxxxxxxxxxxx  ",
-  "                      "
-];
-
-
 // funzione costruttore di un livello, si aspetta un parametro plan e disegna il livello
 function Level(plan) {
   this.width = plan[0].length; // lunghezza del piano (conto quanto è lungo il primo elemento dell'array)
@@ -240,8 +226,9 @@ var maxStep = 0.05;
 
 // metodo che da a tutti gli attori la possibilità di muoversi
 Level.prototype.animate = function(step, keys) {
+  //console.log(step);
   var stepCLone = step;
-  console.log(this.finishDelay);
+  //console.log(this.finishDelay);
   if (this.status != null) // ossia il giocatore ha vinto o perso
     this.finishDelay -= step;
 
@@ -374,6 +361,7 @@ var arrows = trackKeys(arrowCodes);
 
 function runLevel(level, Display, andThen) {
   var display = new Display(document.body, level);
+  
   runAnimation(function(step) {
     level.animate(step, arrows);
     display.drawFrame(step);
@@ -386,19 +374,53 @@ function runLevel(level, Display, andThen) {
   });
 }
 
+levelStart = 0;
+livesStart = 3;
+
+// funziona principale da cui parte tutto, gli viene passato l'array dei livelli e l'ogetto DOM che crea il tutto.
 function runGame(plans, Display) {
-  function startLevel(n) {
+  //console.log(Display);
+  var level = document.querySelector('#level');
+  var lifes = document.querySelector('#lifes');
+
+  function startLevel(n,lives) {
+    lifes.textContent = lives;
+    level.textContent = n + 1;
     runLevel(new Level(plans[n]), Display, function(status) {
-      if (status == "lost")
-        startLevel(n);
-      else if (n < plans.length - 1)
-        startLevel(n + 1);
-      else
+      if (status == "lost"){
+        lives -= 1;
+        
+        if(lives <= 0){
+          alert("Game Over, Ricomincia da capo!!!");
+          startLevel(levelStart, livesStart);
+        }else{
+          startLevel(n, lives);
+        }
+      }else if (n < plans.length - 1){
+        startLevel(n + 1, lives);
+      }else{
         console.log("You win!");
+      }
     });
   }
-  startLevel(0);
+  startLevel(levelStart, livesStart);
 }
+
+
+// array di stringhe che rappresenta la griglia di un livello
+/*
+var simpleLevelPlan = [
+  "                      ",
+  "                      ",
+  "  x              = x  ",
+  "  x         o o    x  ",
+  "  x @      xxxxx   x  ",
+  "  xxxxx            x  ",
+  "      x!!!!!!!!!!!!x  ",
+  "      xxxxxxxxxxxxxx  ",
+  "                      "
+];
+*/
 
 //var simpleLevel = new Level(simpleLevelPlan);
 //var display = new DOMDisplay(window.document.body, simpleLevel);
