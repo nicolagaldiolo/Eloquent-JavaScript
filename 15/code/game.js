@@ -197,16 +197,24 @@ DOMDisplay.prototype.clear = function() {
   this.wrap.parentNode.removeChild(this.wrap);
 };
 
+// metodo che i permette di sapere quali caselle vengono toccate per ogni spostamento
+// per ogni spostamento controllo se in ogni casella che incontro trovo qualcosa e se lo trovo lo torno.
 Level.prototype.obstacleAt = function(pos, size) {
+
+  // mi definisco le posizioni delle cella occupate in questo momento
   var xStart = Math.floor(pos.x);
   var xEnd = Math.ceil(pos.x + size.x);
   var yStart = Math.floor(pos.y);
   var yEnd = Math.ceil(pos.y + size.y);
 
+  // se il corpo sporge sopra o ai lati ho trovato un muro
   if (xStart < 0 || xEnd > this.width || yStart < 0)
     return "wall";
+  // se il corpo sporge in basso ho trovato la lava.
   if (yEnd > this.height)
     return "lava";
+
+  // se il corpo si trova tutto all'interno della griglia mi ciclo le caselle trovate e torno l'eventuale ostacolo trovato (al di fuori di lava statica o muro).
   for (var y = yStart; y < yEnd; y++) {
     for (var x = xStart; x < xEnd; x++) {
       var fieldType = this.grid[y][x];
@@ -215,6 +223,7 @@ Level.prototype.obstacleAt = function(pos, size) {
   }
 };
 
+// quando viene rilevata una collisione viene chiamato questo metodo che passa in rassegna gli attori in cerca di una che si sovrappone a quello dato come argomento.
 Level.prototype.actorAt = function(actor) {
   for (var i = 0; i < this.actors.length; i++) {
     var other = this.actors[i];
@@ -229,8 +238,11 @@ Level.prototype.actorAt = function(actor) {
 
 var maxStep = 0.05;
 
+// metodo che da a tutti gli attori la possibilità di muoversi
 Level.prototype.animate = function(step, keys) {
-  if (this.status != null)
+  var stepCLone = step;
+  console.log(this.finishDelay);
+  if (this.status != null) // ossia il giocatore ha vinto o perso
     this.finishDelay -= step;
 
   while (step > 0) {
@@ -387,7 +399,6 @@ function runGame(plans, Display) {
   }
   startLevel(0);
 }
-
 
 //var simpleLevel = new Level(simpleLevelPlan);
 //var display = new DOMDisplay(window.document.body, simpleLevel);
