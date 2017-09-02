@@ -56,8 +56,6 @@ Vector.prototype.times = function(factor) {
 // Oggetto per calcolare le posizioni
 
 
-
-
 var actorChars = {
   "@": Player,
   "o": Coin,
@@ -226,9 +224,7 @@ var maxStep = 0.05;
 
 // metodo che da a tutti gli attori la possibilità di muoversi
 Level.prototype.animate = function(step, keys) {
-  //console.log(step);
   var stepCLone = step;
-  //console.log(this.finishDelay);
   if (this.status != null) // ossia il giocatore ha vinto o perso
     this.finishDelay -= step;
 
@@ -326,8 +322,10 @@ Level.prototype.playerTouched = function(type, actor) {
   }
 };
 
+// Oggetto dove vengono mappati i testi di cui mi interessa conoscerne lo stato
 var arrowCodes = {37: "left", 38: "up", 39: "right"};
 
+// funzione che mi restitusce (con un altro oggetto) con le informazioni sullo stato dei pulsanti (true = premuto | false = non premuto)
 function trackKeys(codes) {
   var pressed = Object.create(null);
   function handler(event) {
@@ -337,14 +335,23 @@ function trackKeys(codes) {
       event.preventDefault();
     }
   }
+  
   addEventListener("keydown", handler);
   addEventListener("keyup", handler);
+  
+  pressed.unregister = function(){
+    removeEventListener("keydown", handler);
+    removeEventListener("keyup", handler);
+  }
+  
   return pressed;
 }
 
+// funzione ausiliaria che accetta una funzione anonima la quale riceve come parametro un intervallo di tempo e tracci un solo fotogramma.
 function runAnimation(frameFunc) {
   var lastTime = null;
   function frame(time) {
+    
     var stop = false;
     if (lastTime != null) {
       var timeStep = Math.min(time - lastTime, 100) / 1000;
@@ -361,17 +368,40 @@ var arrows = trackKeys(arrowCodes);
 
 function runLevel(level, Display, andThen) {
   var display = new Display(document.body, level);
+
+  var running = true;
+  var pauseContent = document.querySelector('#pause');
+  pauseContent.textContent = running;
   
-  runAnimation(function(step) {
-    level.animate(step, arrows);
-    display.drawFrame(step);
-    if (level.isFinished()) {
-      display.clear();
-      if (andThen)
-        andThen(level.status);
-      return false;
+  function handlePause(e){
+    if(e.keyCode == 27){
+      if(running){
+        pauseContent.textContent = running = false;
+      }else{
+        pauseContent.textContent = running = true;
+        runAnimation(animation);
+      }
     }
-  });
+  }
+  addEventListener("keydown", handlePause);
+
+  function animation(step){
+    if(!running){
+      return false;
+    }else{
+      level.animate(step, arrows);
+      display.drawFrame(step);
+      if (level.isFinished()) {
+        display.clear();
+        removeEventListener("keydown", handlePause);
+        arrows.unregister(); // (see change to trackKeys below)
+        if (andThen)
+          andThen(level.status);
+        return false;
+      }
+    }
+  }
+  runAnimation(animation);
 }
 
 levelStart = 0;
@@ -379,7 +409,6 @@ livesStart = 3;
 
 // funziona principale da cui parte tutto, gli viene passato l'array dei livelli e l'ogetto DOM che crea il tutto.
 function runGame(plans, Display) {
-  //console.log(Display);
   var level = document.querySelector('#level');
   var lifes = document.querySelector('#lifes');
 
