@@ -364,9 +364,8 @@ function runAnimation(frameFunc) {
   requestAnimationFrame(frame);
 }
 
-var arrows = trackKeys(arrowCodes);
-
 function runLevel(level, Display, andThen) {
+  var arrows = trackKeys(arrowCodes);
   var display = new Display(document.body, level);
 
   var running = true;
