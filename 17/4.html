@@ -1,0 +1,30 @@
+<html>
+  <body>
+    <script>
+      // PROMISES
+      // interfaccia della promises
+      function get(url){
+        return new Promise(function(succeed, fail){
+          var req = new XMLHttpRequest();
+          req.open("GET", url, true);
+          req.addEventListener("load", function(){
+            if(req.status < 400){
+              succeed(req.responseText);
+            }else{
+              fail(new Error("Request failed: " + req.statusText));  
+            }
+          });
+          req.addEventListener("error", function(){
+            fail(new Error("Network error"));
+          });
+          req.send(null);
+        });
+      }
+
+      get("http://ajaxrequest.local/example/data.xml").then( 
+        function(text){console.log("data.xml: " + text)} , 
+        function(error){console.log("failed to fetch data.xml: " + error)} 
+      );
+    </script>
+  </body>
+</html>

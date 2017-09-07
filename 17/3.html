@@ -1,0 +1,59 @@
+<html>
+  <body>
+    <script>
+       // ASTRAZIONE DELLE RICHIESTE
+        
+      function backgroundReadFile(url, callback){
+        var req = new XMLHttpRequest();
+        req.open("GET", url, true);
+        req.addEventListener("load", function(){
+          if(req.status < 400)
+            callback(req.responseText);
+        });
+        req.send(null);
+      };    
+
+      // nel codice seguente l'eccezzione non sarà catturata perchè la chiamata a backgroundReadFile
+      // restituisce immediatamente. Il flusso di controllo lascia quindi il blocco try e la callback verrà 
+      // richiamata solo quando la richiesta ajax ja tornato una risposta.
+      // il blocco try catch è già stato eseguito quindi viene semplicemente stampato l'errore e non un accezzione.
+
+      try{
+        backgroundReadFile("http://ajaxrequest.local/example/data.xml", function(text){
+          console.log(text);
+          if(text != "expected")
+            throw new Error("That was unexpected");
+        });
+      } catch(e){
+        console.log(e);
+      }
+
+      // POSSIBILE ALTERNATIVA
+      // la cosa migliore comunque è gestire il tutto con delle promise.
+
+      function getURL(url, callback){
+        var req = new XMLHttpRequest();
+        req.open("GET", url, true);
+        req.addEventListener("load", function(){
+          if(req.status < 400){
+            callback(req.responseText);
+          }else{
+            callback(null, new Error("Request failed: " + req.statusText));
+          }
+        });
+        req.addEventListener("error", function(){
+          callback(null, new Error("Network error"));
+        });
+        req.send(null);
+      }
+
+      getURL("http://ajaxrequest.local/example/data.xml", function(text, error){
+        if(error != null){
+          console.log("Failer: " + error );
+        }else{
+          console.log(text);  
+        }
+      });
+    </script>
+  </body>
+</html>

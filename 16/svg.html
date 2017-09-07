@@ -1,0 +1,17 @@
+<html>
+  <head></head>
+  <body>
+    <p>Normal HTML here.</p>
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <circle r="50" cx="50" cy="50" fill="red"/>
+      <circle r="50" cx="155" cy="50" fill="red"/>
+      <rect x="210" y="5" width="90" height="90" stroke="blue" fill="none">
+    </svg>
+
+    <!-- Gli elementi svg crea degli elementi del dom che possono essere manipolati da js -->
+    <script>
+      var circle = document.querySelectorAll("circle");
+      circle[1].setAttribute("fill", "cyan");
+    </script>
+  </body>
+</html>

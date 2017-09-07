@@ -1,0 +1,56 @@
+<html>
+  <head></head>
+  <body>
+    
+    <hr>
+    <h1>Campi file</h1>
+    <p>Singolo</p>
+    <input class="file" type="file">
+
+    <p>Multiple</p>
+    <input multiple class="fileMultiple" type="file">
+    
+  
+    
+    <script>
+
+      var file = document.querySelector(".file");
+      file.addEventListener("change", function(){
+        if(file.files.length > 0){
+          var myfile = file.files[0];
+        }
+        console.log(myfile);
+      });
+
+      console.log("---------------------------------------");
+      
+      var fileMultiple = document.querySelector(".fileMultiple");
+      
+      fileMultiple.addEventListener("change", function(){
+        // uso il metodo call in quanto non potrei chiamare foreach perchè "fileMultiple.files" è un elemento del DOM simil-array e non un array vero e proprio.
+        // Non posso usare un normale ciclo for in quanto si tratta di chiamate asincrone e con un ciclo for il ciclo va avanti quanto i dati devono ancora essere restituiti e quando ciò accade le variabili fanno riferimento all'ultimo elemento ciclato.
+        Array.prototype.forEach.call(fileMultiple.files, function(file){
+          readFile(file)
+          .then( function(value){ console.log(value.slice(0,20)) } )
+          .catch( function(error){ console.log("Quancosa è andato storto: ", error) });
+        })
+      });
+
+      // la cosa migliore è avvolgere la chiamata asincrona in una promise così vengono gestiti + facilemente successi/insuccessi
+      function readFile(file){
+        return new Promise(function(success, fail){
+          var reader = new FileReader(); // il costruttore FileReader è una cosa simile a XMLHttpRequest ma specifica per i file.
+          reader.addEventListener("load", function(){
+            success(reader.result);
+          });
+          reader.addEventListener("error", function(){
+            fail(reader.error);
+          });
+          reader.readAsText(file);
+        });
+      }
+      
+
+    </script>
+  </body>
+</html>

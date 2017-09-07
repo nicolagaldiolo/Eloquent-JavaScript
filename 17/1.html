@@ -1,0 +1,37 @@
+<html>
+  <body>
+    <script>
+      // RICHIESTA SINCRONA
+      // passando false come parametro al metodo open stiamo dicendo che la chiamata è sincrona
+      // quindi la risposta è subito disponbile ma il programma e il browser restano in sospeso fino a quando arriva la risposta.
+      // se la risposta tarda ad arrivare sono bloccato fino ad allora.
+
+      var req = new XMLHttpRequest(); // creo un oggetto XMLHttpRequest per effettuare la richiesta
+      req.open("GET", "http://ajaxrequest.local/example/data.txt", false); // metodo che configura la richiesta (par: metodo|risorsa|async o no| user|password)
+      req.send(null); // metodo che invia la richiesta (come parametro passiamo il corpo della richiesta che nel caso di get possiamo definire come null)
+      console.log(req.responseText); // metodo che mi permette di recuperare il corpo della richiesta
+      console.log(req.status, req.statusText); // per recuperare info sullo stato della richiesta (codice di stato e stato in forma testuale)
+      // -> 200 OK
+      console.log(req.getAllResponseHeaders("content-type")); // per esaminare gli header della risposta
+      // -> text/plain
+
+
+      // RICHIESTA ASINCRONA
+      // passando true come parametro al metodo open stiamo dicendo che la chiamata è asincrona
+      // quindi non sappiamo quando la risposta sarà disponibile ma il programma e il browser possono continuare a lavorare 
+      // tranquillamente e ricevere dati in background.
+
+      var req = new XMLHttpRequest();
+      req.open("GET", "http://ajaxrequest.local/example/data.txt", true);
+      req.send(null); // Quando richiamiamo send l'unica cosa che succede immediatamente è che la richiesa viene messa in coda per essere trasmessa.
+
+      // ovviamente non possiamo accedere alla risposta fino a quando la richiesta è stata completata.
+      // occorre usare un ascoltatore che ci avisa quando la risposta arriva.
+      console.log("Stampo risposta senza attendere che sia pronta: ", req.responseText);
+      req.addEventListener("load", function(){
+        console.log("Done:", req.status);
+        console.log("Stampo risposta al momento opportuno: ", req.responseText);
+      })
+    </script>
+  </body>
+</html>

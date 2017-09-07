@@ -1,0 +1,57 @@
+<html>
+    <head>
+      <style>
+        #field{
+          width:100%;
+          padding: 10px;
+        }
+        #suggestions{
+          margin: 10px 0 0 0;
+        }
+        #suggestions span{
+          background-color: #f6f7f9;
+          border: 1px solid #ced0d4;
+          color: #4b4f56;
+          font-size: 14px;
+          display: inline-block;
+          padding: 0 5px;
+          margin: 0 5px 0 0;
+        }
+      </style>
+    </head>
+    <body>
+      
+      <input type="text" id="field">
+      <div id="suggestions" style="cursor: pointer"></div>
+      
+      <script>
+        var terms = ["Astuccio", "Arioso", "Aristotele", "Arduino", "Allergia", "Libro", "Sveglia", "Sole", "Casa", "Gionale", "Bicicletta", "Orologio", "Ombrello", "Divano", "Elefante", "Fontana", "Gino", "Hotel"];
+        
+        var field = document.querySelector("#field");
+        var suggestions = document.querySelector("#suggestions");
+
+        field.addEventListener("input", function(){
+          suggestions.textContent = "";
+          var arrayFilter = terms.filter(function(i){
+            return i.toLowerCase().indexOf(field.value.toLowerCase()) == 0;
+          });
+          
+          arrayFilter.slice(0,3).forEach(function(i){
+            var term = document.createElement("span");
+            term.textContent = i;
+            suggestions.appendChild(term);
+          });
+
+        });
+
+        suggestions.addEventListener("click", function(e){
+          if(e.target.parentNode.id === "suggestions")
+            field.value = e.target.textContent;
+        })
+
+
+        
+      </script>
+
+    </body>
+  </html>

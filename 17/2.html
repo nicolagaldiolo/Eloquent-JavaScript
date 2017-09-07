@@ -1,0 +1,30 @@
+<html>
+  <body>
+    <script>
+      // RICHIESTA ASINCRONA FILE XML
+              
+      var req = new XMLHttpRequest();
+      req.open("GET", "http://ajaxrequest.local/example/data.xml", true);
+      req.send(null); // Quando richiamiamo send l'unica cosa che succede immediatamente è che la richiesa viene messa in coda per essere trasmessa.
+      req.addEventListener("load", function(){
+        var result = req.responseXML.querySelectorAll("fruit");
+        result.forEach(function(element) {
+          console.log(element.getAttribute("name"));
+        }, this);
+      })
+
+      // RICHIESTA ASINCRONA FILE JSON
+
+      var req2 = new XMLHttpRequest();
+      req2.open("GET", "http://ajaxrequest.local/example/data.json", true);
+      req2.send(null); // Quando richiamiamo send l'unica cosa che succede immediatamente è che la richiesa viene messa in coda per essere trasmessa.
+      req2.addEventListener("load", function(){
+        var result2 = JSON.parse(req2.responseText);
+        result2.fruits.forEach(function(element){
+          console.log(element.name);
+        });
+        
+      })
+    </script>
+  </body>
+</html>

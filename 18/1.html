@@ -1,0 +1,155 @@
+<html>
+  <head></head>
+  <body>
+    <h1>Focus/blur Effect</h1>
+    <form name="formTest">
+      <input class="myInput" type="text">
+    </form>
+
+    <hr>
+    <h1>No Submit</h1>
+    <form class="noSubmit" action="">
+      <input type="text" name="text"> Testo <br/>
+      <input type="password" name="password"> Password <br/>
+      <button>Submit</button>
+    </form>
+
+    <hr>
+    <h1>Text Replace</h1>
+    <p>Seleziona del testo e premi il tasto "r"</p>
+    <form class="textReplace" action="">
+      <textarea rows="10"></textarea>
+    </form>
+
+    <hr>
+    <h1>Text Length</h1>
+    <form class="textLength" action="">
+      <textarea rows="10"></textarea><br>
+      Caratteri digitati: <span class="totalCharacters"></span>
+    </form>
+
+    <hr>
+    <h1>Checkbox</h1>
+    <input class="checkbox" type="checkbox" id="purple"/>
+    <label for="purple">Make this page purple</label>
+
+    <hr>
+    <h1>Radio</h1>
+    <input type="radio" name="color" id="red" value="red"/> <label for="red">Rosso</label>
+    <input type="radio" name="color" id="green" value="green"/> <label for="green">Verde</label>
+    <input type="radio" name="color" id="orange" value="orange"/> <label for="orange">Arancione</label>
+
+    <hr>
+    <h1>Select singola/multipla</h1>
+    <p>Singola</p>
+    <select>
+      <option>Pancakes</option>
+      <option>Pudding</option>
+      <option>Icecream</option>
+    </select>
+
+    <p>Multipla</p>
+    <select multiple size="6">
+      <option>Pancakes</option>
+      <option>Pudding</option>
+      <option>Icecream</option>
+      <option>Pancakes</option>
+      <option>Pudding</option>
+      <option>Icecream</option>
+    </select>
+    
+    <select multiple size="3">
+      <option>Pancakes</option>
+      <option>Pudding</option>
+      <option>Icecream</option>
+      <option>Pancakes</option>
+      <option>Pudding</option>
+      <option>Icecream</option>
+    </select>
+
+    <p>Esempio Multipla</p>
+    <select id="binary" multiple>
+      <option value="1">0001</option>
+      <option value="2">0010</option>
+      <option value="4">0100</option>
+      <option value="8">1000</option>
+    </select> = <span id="output">0</span>
+
+    <script>
+      var myInput = document.querySelector(".myInput");
+      console.log("---------------------------------------");
+      myInput.focus(); // sposta il focus sull'elemento
+      console.log(document.activeElement.tagName);
+      myInput.blur(); // toglie il focus dall'elemento
+      console.log(document.activeElement.tagName);
+      
+      console.log("---------------------------------------");
+      var noSubmit = document.querySelector(".noSubmit");
+      noSubmit.addEventListener("submit", function(event){
+        console.log("Il valore del campo text è: " + noSubmit.elements.text.value);
+        console.log("Il valore del campo password è: " + noSubmit.elements.text.value);
+        console.log("Submit disabilitato");
+        event.preventDefault();
+      });
+
+      console.log("---------------------------------------");
+      var mytextArea = document.querySelector(".textReplace textarea");
+      console.log(mytextArea);
+      mytextArea.addEventListener("keydown", function(e){
+        if(e.keyCode == 82){
+          console.log("Sto premendo R");
+          replaceSeletion(mytextArea, "Khasekhemwy");
+          e.preventDefault();
+        }
+      })
+
+      function replaceSeletion(element, word){
+        var from = element.selectionStart;
+        var to = element.selectionEnd;
+        element.value = element.value.slice(0,from) + word + element.value.slice(to);
+        selectionStart = selectionEnd = from + word.length;
+      }
+
+      console.log("---------------------------------------");
+      var textLength = document.querySelector(".textLength textarea");
+      var totalCharacters = document.querySelector(".totalCharacters");
+      textLength.addEventListener("input", function(){
+        totalCharacters.textContent = textLength.value.length;
+      });
+
+      console.log("---------------------------------------");
+      var checkbox = document.querySelector(".checkbox");
+      checkbox.addEventListener("change", function(e){
+        console.log(e);
+        document.body.style.background = checkbox.checked ? 'mediumpurple' : '';
+
+      });
+
+      console.log("---------------------------------------");
+      var buttons = document.getElementsByName("color");
+      function setColor(event){
+        document.body.style.background = event.target.value;
+      }
+
+      for(var i = 0; i < buttons.length; i++){
+        buttons[i].addEventListener("change", setColor);
+      }
+
+      console.log("---------------------------------------");
+      var select = document.querySelector("#binary");
+      var output = document.querySelector("#output");
+      select.addEventListener("change", function(e){
+        var number = 0;
+        for(var i=0; i<select.options.length; i++){
+          var option = select.options[i];
+          if(option.selected){
+            number += Number(option.value);
+          }
+        }
+        output.textContent = number;
+      })
+      
+
+    </script>
+  </body>
+</html>

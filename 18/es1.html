@@ -1,0 +1,38 @@
+<html>
+    <head>
+      <style>
+        #code{
+          width:100%; 
+          height:10em;;
+        }
+        #button{
+          width:100%; 
+          height:3em;
+          margin:2em 0 0 0;
+        }
+      </style>
+    </head>
+    <body>
+      
+      <textarea id="code">2 + 1</textarea>
+      <button id="button">Run</button>
+      <pre id="output"></pre>
+      
+      <script>
+        var code = document.querySelector("#code");
+        var button = document.querySelector("#button");
+        var output = document.querySelector("#output");
+        
+        button.addEventListener("click", function(){
+          try{
+            var result = new Function(code.value)(); // uso il costrutto new Function() per creare un ambiente isolato e a sè stante.
+            output.textContent = String(result);
+          }catch(e){
+            output.textContent = String(e);
+          }
+        });
+  
+      </script>
+
+    </body>
+  </html>
