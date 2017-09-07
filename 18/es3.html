@@ -8,9 +8,8 @@
   var width = 30, height = 30;
 
   // I will represent the grid as an array of booleans.
-
+  // disegno la griglia
   var gridNode = document.querySelector("#grid");
-  // This holds the checkboxes that display the grid in the document.
   var checkboxes = [];
   for (var y = 0; y < height; y++) {
     for (var x = 0; x < width; x++) {
@@ -22,29 +21,35 @@
     gridNode.appendChild(document.createElement("br"));
   }
 
+  // funzione che passa in rassegna tutta la griglia e crea un nuovo array con solo i valori true/false di ogni check.
   function gridFromCheckboxes() {
     return checkboxes.map(function(box) { return box.checked; });
   }
+
+  // funzione che riceve l'array randomizzato, si gira l'array di tutti i checkbox e li chekka o meno a seconda del valore random assegnato.
   function checkboxesFromGrid(grid) {
     return grid.forEach(function(value, i) { checkboxes[i].checked = value; });
   }
+
+  // funzione che crea un array di valori booleani random lunga tanto quanti gli elementi della griglia 
   function randomGrid() {
     var result = [];
     for (var i = 0; i < width * height; i++)
-      result.push(Math.random() < 0.3);
+      result.push(Math.random() < 0.4);
     return result;
   }
 
   checkboxesFromGrid(randomGrid());
 
-  // This does a two-dimensional loop over the square around the given
-  // x,y position, counting all fields that have a cell but are not the
-  // center field.
+
+  // per ogni cella della mia gliglia calcolo i vicini nelle 8 direzioni (↑|↗|→|↘|↓|↙|←|↖)
   function countNeighbors(grid, x, y) {
     var count = 0;
+    // faccio un doppio ciclo su x e y prendendo in considerazione solo le celle a me adiacenti
     for (var y1 = Math.max(0, y - 1); y1 <= Math.min(height - 1, y + 1); y1++) {
       for (var x1 = Math.max(0, x - 1); x1 <= Math.min(width - 1, x + 1); x1++) {
-        if ((x1 != x || y1 != y) && grid[x1 + y1 * width])
+        console.log("x:", x, "y:", y, "x1:", x1, "y1:", y1 );
+        if ((x1 != x || y1 != y) && grid[x1 + y1 * width]) // (x1 != x || y1 != y) serve per evitare me stesso
           count += 1;
       }
     }
@@ -53,10 +58,13 @@
 
   function nextGeneration(grid) {
     var newGrid = new Array(width * height);
+    
     for (var y = 0; y < height; y++) {
       for (var x = 0; x < width; x++) {
-        var neighbors = countNeighbors(grid, x, y);
-        var offset = x + y * width;
+        var neighbors = countNeighbors(grid, x, y); // passo a countNeighbors la griglia in modo che ogni checkbox abbiamo coscenza di tutta la griglia.
+        
+        var offset = x + (y * width); // calcola la posizione del checkbox corrente
+        
         if (neighbors < 2 || neighbors > 3)
           newGrid[offset] = false;
         else if (neighbors == 2)
@@ -69,11 +77,16 @@
   }
 
   function turn() {
+    // gridFromCheckboxes() mi torna la mappatura di ogni checkbox (checked o non checked)
+    // nextGeneration() prende la vecchia mappatura, la analizza e torna la nuova griglia con i cambiamenti del caso
+    // checkboxesFromGrid cambia lo stato dei checkbox presenti il griglia adeguandoli alla nuova mappatura fornita da nextGeneration().
+    
     checkboxesFromGrid(nextGeneration(gridFromCheckboxes()));
   }
 
   document.querySelector("#next").addEventListener("click", turn);
 
+  
   var running = null;
   document.querySelector("#run").addEventListener("click", function() {
     if (running) {
