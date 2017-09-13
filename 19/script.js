@@ -21,7 +21,7 @@ function createPaint(parent) {
   var canvas = elt("canvas", {width: 500, height: 300});
   var cx = canvas.getContext("2d");
   var toolbar = elt("div", {class: "toolbar"});
-  console.log(controls);
+  //console.log(controls);
   for (var name in controls)
     toolbar.appendChild(controls[name](cx));
 
@@ -94,7 +94,7 @@ tools.Erase = function(event, cx) {
 };
 
 controls.color = function(cx){
-  var input = elt("input", {type: "color"});
+  var input = elt("input", {id: "colorPicker", type: "color"});
   input.addEventListener("change", function(){
     cx.fillStyle = input.value; //fillStyle colore di riempimento
     cx.strokeStyle = input.value; //strokeStyle colore del bordo
@@ -224,7 +224,7 @@ tools.Rectangle = function(event, cx) {
   var pageStart = absolutePos(event);  
   var trackingNode = document.createElement("div");
   trackingNode.style.position = "absolute";
-  trackingNode.style.background = "#f5f5f5";
+  trackingNode.style.background = "rgba(219, 219, 219,.8)";
   document.body.appendChild(trackingNode);
 
   trackDrag(function(event) {    
@@ -239,4 +239,40 @@ tools.Rectangle = function(event, cx) {
     cx.fillRect(rect.left, rect.top, rect.width, rect.height);
     document.body.removeChild(trackingNode);
   });
+};
+
+function colorAt(cx, x, y){
+  var data = cx.getImageData(x, y, 1, 1).data;
+  var color = "rgb(" + data[0] + "," + data[1] + "," + data[2] + ")";
+  return rgb2hex(color);
+}
+
+function rgb2hex(rgb){
+  rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+  return (rgb && rgb.length === 4) ? "#" +
+    ("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+    ("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+    ("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : '';
+}
+
+tools["Pick color"] = function(event, cx) {
+  var pos = relativePos(event, cx.canvas);
+
+  try {
+    var color = colorAt(cx, pos.x, pos.y);
+  } catch(e) {
+    if (e instanceof SecurityError) {
+      alert("Unable to access your picture's pixel data");
+      return;
+    } else {
+      throw e;
+    }
+  }
+
+  cx.fillStyle = color;
+  cx.strokeStyle = color;
+  
+  colorPickerElement = document.querySelector("#colorPicker");
+  colorPickerElement.value = color;
+
 };
