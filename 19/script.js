@@ -93,21 +93,22 @@ tools.Erase = function(event, cx) {
   });
 };
 
+var colorPicker = elt("input", {type: "color"});
 controls.color = function(cx){
-  var input = elt("input", {id: "colorPicker", type: "color"});
-  input.addEventListener("change", function(){
-    cx.fillStyle = input.value; //fillStyle colore di riempimento
-    cx.strokeStyle = input.value; //strokeStyle colore del bordo
+
+  colorPicker.addEventListener("change", function(){
+    cx.fillStyle = colorPicker.value; //fillStyle colore di riempimento
+    cx.strokeStyle = colorPicker.value; //strokeStyle colore del bordo
   });
-  return elt("span", null, "Color: ", input);
+  return elt("span", null, "Color: ", colorPicker);
 }
 
 controls.brushSize = function(cx) {
   var select = elt("select");
   var sizes = [1, 2, 3, 5, 8, 12, 25, 35, 50, 75, 100];
-  sizes.forEach(function(size) {
-    select.appendChild(elt("option", {value: size},
-                           size + " pixels"));
+  sizes.forEach(function(size, index) {
+    var attr = index === 2 ? {value: size, selected:""} : {value: size};
+    select.appendChild(elt("option", attr, size + " pixels"));
   });
   select.addEventListener("change", function() {
     cx.lineWidth = select.value;
@@ -271,8 +272,6 @@ tools["Pick color"] = function(event, cx) {
 
   cx.fillStyle = color;
   cx.strokeStyle = color;
-  
-  colorPickerElement = document.querySelector("#colorPicker");
-  colorPickerElement.value = color;
+  colorPicker.value = color;
 
 };
