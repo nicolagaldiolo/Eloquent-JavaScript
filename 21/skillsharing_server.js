@@ -102,22 +102,67 @@ function sendTalks(talks, response){
 }
 
 router.add("GET", /^\/talks$/, function(request, response) {
-  var query = require("url").parse(request.url, true).query;
-  if (query.changesSince == null) {
+  var query = require("url").parse(request.url, true).query; // se alla funzione parse passo true come 2° parametro verranno analizzati anche i parametri "query" dell'url e l'ggetto tornato avrà anche la proprietà string con a sua 
+  // volta un oggetto con nome dei poarametri e rispettivi valori.
+  if (query.changesSince == null) { // se non ho ancora passato una data torno tutti i talk
     var list = [];
     for (var title in talks)
       list.push(talks[title]);
     sendTalks(list, response);
-  } else {
+  } else { // altrimenti analizzo query.changesSince
     var since = Number(query.changesSince);
-    if (isNaN(since)) {
+    if (isNaN(since)) { // se query.changesSince non è un numero torno un errore
       respond(response, 400, "Invalid parameter");
-    } else {
-      var changed = getChangedTalks(since);
-      if (changed.length > 0)
-         sendTalks(changed, response);
-      else
+    } else { // altrimenti torno i talk 
+      var changed = getChangedTalks(since); // la funzione torna un array di presentazioni che sono state modificate da un certo orario.
+      if (changed.length > 0) // se ce ne sono le torno
+        sendTalks(changed, response);
+      else // altrimenti non ho niente da trasmettere e resto in attesa
         waitForChanges(since, response);
     }
   }
 });
+
+var waiting = [];
+
+function waitForChanges(since, response) {
+  var waiter = {since: since, response: response};
+  waiting.push(waiter);
+  setTimeout(function() {
+    var found = waiting.indexOf(waiter);
+    if (found > -1) {
+      waiting.splice(found, 1);
+      sendTalks([], response);
+    }
+  }, 90 * 1000);
+}
+
+var changes = [];
+
+function registerChange(title) {
+  changes.push({title: title, time: Date.now()});
+  waiting.forEach(function(waiter) {
+    sendTalks(getChangedTalks(waiter.since), waiter.response);
+  });
+  waiting = [];
+}
+ 
+// Funzione che restituisce un array di presentazioni che sono state modificate da un certo orario
+function getChangedTalks(since) {
+  var found = [];
+  function alreadySeen(title) {
+    return found.some(function(f) {return f.title == title;});
+  }
+  for (var i = changes.length - 1; i >= 0; i--) {
+    var change = changes[i];
+    if (change.time <= since)
+      break;
+    else if (alreadySeen(change.title))
+      continue;
+    else if (change.title in talks)
+      found.push(talks[change.title]);
+    else
+      found.push({title: change.title, deleted: true});
+  }
+  return found;
+}
