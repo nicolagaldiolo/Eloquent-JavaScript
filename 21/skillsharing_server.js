@@ -157,8 +157,8 @@ function getChangedTalks(since) {
     var change = changes[i];
     if (change.time <= since)
       break;
-    else if (alreadySeen(change.title))
-      continue;
+    //else if (alreadySeen(change.title)) /////////////////////////VERIFICA QUESTA COSA
+    //  continue;
     else if (change.title in talks)
       found.push(talks[change.title]);
     else
