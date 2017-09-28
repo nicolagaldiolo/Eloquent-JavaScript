@@ -14,10 +14,11 @@ function request(options, callback) {
 }
 
 var lastServerTime = 0;
-request({pathname: "talks"}, function(error, response){
-  if(error){
+
+request({pathname: "talks"}, function(error, response) {
+  if (error) {
     reportError(error);
-  }else{
+  } else {
     response = JSON.parse(response);
     displayTalks(response.talks);
     lastServerTime = response.serverTime;
@@ -25,29 +26,29 @@ request({pathname: "talks"}, function(error, response){
   }
 });
 
-function reportError(error){
-  if(error)
+function reportError(error) {
+  if (error)
     alert(error.toString());
 }
 
 var talkDiv = document.querySelector("#talks");
 var shownTalks = Object.create(null);
 
-function displayTalks(talks){
+function displayTalks(talks) {
   talks.forEach(function(talk) {
     var shown = shownTalks[talk.title];
-    if(talk.deleted){
-      if(shown){
+    if (talk.deleted) {
+      if (shown) {
         talkDiv.removeChild(shown);
         delete shownTalks[talk.title];
       }
     } else {
       var node = drawTalk(talk);
-      if(shown)
+      if (shown)
         talkDiv.replaceChild(node, shown);
       else
         talkDiv.appendChild(node);
-      shownTalks[talk.title] = node; 
+      shownTalks[talk.title] = node;
     }
   });
 }
@@ -94,4 +95,58 @@ function drawTalk(talk) {
     form.reset();
   });
   return node;
+}
+
+function talkURL(title) {
+  return "talks/" + encodeURIComponent(title);
+}
+
+function deleteTalk(title) {
+  request({pathname: talkURL(title), method: "DELETE"},
+          reportError);
+}
+
+function addComment(title, comment) {
+  var comment = {author: nameField.value, message: comment};
+  request({pathname: talkURL(title) + "/comments",
+           body: JSON.stringify(comment),
+           method: "POST"},
+          reportError);
+}
+
+var nameField = document.querySelector("#name");
+
+nameField.value = localStorage.getItem("name") || "";
+
+nameField.addEventListener("change", function() {
+  localStorage.setItem("name", nameField.value);
+});
+
+var talkForm = document.querySelector("#newtalk");
+
+talkForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+  request({pathname: talkURL(talkForm.elements.title.value),
+           method: "PUT",
+           body: JSON.stringify({
+             presenter: nameField.value,
+             summary: talkForm.elements.summary.value
+           })}, reportError);
+  talkForm.reset();
+});
+
+function waitForChanges() {
+  console.log("Eccomi");
+  request({pathname: "talks?changesSince=" + lastServerTime},
+          function(error, response) {
+    if (error) {
+      setTimeout(waitForChanges, 2500);
+      console.error(error.stack);
+    } else {
+      response = JSON.parse(response);
+      displayTalks(response.talks);
+      lastServerTime = response.serverTime;
+      waitForChanges();
+    }
+  });
 }
