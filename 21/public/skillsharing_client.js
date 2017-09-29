@@ -136,7 +136,6 @@ talkForm.addEventListener("submit", function(event) {
 });
 
 function waitForChanges() {
-  console.log("Eccomi");
   request({pathname: "talks?changesSince=" + lastServerTime},
           function(error, response) {
     if (error) {
