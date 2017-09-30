@@ -1,6 +1,7 @@
-var http = require("http");
-var Router = require("./router");
-var ecstatic = require("ecstatic");
+var http      = require("http");
+var Router    = require("./router");
+var ecstatic  = require("ecstatic");
+var fs        = require("fs")
 
 var fileServer = ecstatic({root: "./public"});
 var router = new Router();
@@ -16,11 +17,24 @@ function respond(response, status, data, type) {
 }
 
 function respondJSON(response, status, data) {
-  respond(response, status, JSON.stringify(data),
-          "application/json");
+  respond(response, status, JSON.stringify(data), "application/json");
 }
 
-var talks = Object.create(null);
+var talks = loadTalks();
+
+function loadTalks(){
+  var result = Object.create(null), json;
+  try{
+    json = JSON.parse(fs.readFileSync("./talks.json", "utf8"));
+  }catch(e){
+    json = {};
+  }
+  for(var title in json)
+    result[title] = json[title];
+  return result;
+}
+
+
 
 // funzione di gestione per visualizzare le presentazioni
 router.add("GET", /^\/talks\/([^\/]+)$/, function(request, response, title) {
@@ -145,6 +159,11 @@ function registerChange(title) {
     sendTalks(getChangedTalks(waiter.since), waiter.response);
   });
   waiting = [];
+
+  fs.writeFile("./talks.json", JSON.stringify(talks), function(err){
+    if(err)
+      console.log("Failed to write file:", err);
+  });
 }
  
 // Funzione che restituisce un array di presentazioni che sono state modificate da un certo orario
@@ -157,8 +176,8 @@ function getChangedTalks(since) {
     var change = changes[i];
     if (change.time <= since)
       break;
-    //else if (alreadySeen(change.title)) /////////////////////////VERIFICA QUESTA COSA
-    //  continue;
+    else if (alreadySeen(change.title))
+      continue;
     else if (change.title in talks)
       found.push(talks[change.title]);
     else

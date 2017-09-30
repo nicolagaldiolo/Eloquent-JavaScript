@@ -23,15 +23,16 @@
         <h2>{{title}}</h2>
         <div>by <span class="name">{{presenter}}</span></div>
         <p>{{summary}}</p>
-        <div class="comments"></div>
+        <div class="comments">
+          <div class="comment" template-repeat="comments">
+            <span class="name">{{author}}</span>: {{message}}
+          </div>
+        </div>
         <form>
           <input type="text" name="comment">
           <button type="submit">Add comment</button>
           <button type="button" class="del">Delete talk</button>
         </form>
-      </div>
-      <div class="comment">
-        <span class="name">{{author}}</span>: {{message}}
       </div>
     </div>
     
